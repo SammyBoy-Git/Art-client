@@ -15,6 +15,7 @@ public class Tracker {
     public static int combo, kills;
     public static double lastReach;
     public static LivingEntity target; public static long targetSeenAt;
+    public static LivingEntity hitTarget; public static long hitAt;
     public static double speed;
 
     static float lastHp = -1; static double lx, lz; static int lastAttackId = -1; static long lastAttackAt;
@@ -68,7 +69,7 @@ public class Tracker {
             int id = le.getId(); seen.add(id);
             float h = le.getHealth(), old = hp.getOrDefault(id, h);
             if (h < old && id == lastAttackId && now - lastAttackAt < 1000) {
-                lastHit = old - h; totalDealt += lastHit; lastHitAt = now; combo++;
+                lastHit = old - h; totalDealt += lastHit; lastHitAt = now; combo++; hitTarget = le; hitAt = now;
                 if (h <= 0) kills++;
             }
             hp.put(id, h);

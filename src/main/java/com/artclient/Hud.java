@@ -1,62 +1,62 @@
 package com.artclient;
 
-import net.minecraft.ChatFormatting;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.scores.PlayerTeam;
-import net.minecraft.world.scores.Scoreboard;
+import java.util.ArrayList;
+import java.util.List;
 
-/** Outlines the last mob/player you hit in red for 5 seconds, darkening each second. */
-public class Glow {
-    static final long DURATION_MS = 5000;
-    static final String TEAM = "artclient_hit";
-    static LivingEntity target;
-    static long startAt;
-    static int lastStep = -1;
+public class Hud {
+    static final long HIGHLIGHT_MS = 5000;
 
-    public static void onHit(Minecraft mc, LivingEntity e) {
-        clear(mc);
-        target = e;
-        startAt = System.currentTimeMillis();
-        lastStep = -1;
-        e.setGlowingTag(true);
-        Scoreboard sb = mc.level.getScoreboard();
-        PlayerTeam team = sb.getPlayerTeam(TEAM);
-        if (team == null) team = sb.addPlayerTeam(TEAM);
-        sb.addPlayerToTeam(e.getScoreboardName(), team);
-        setColor(sb, team, ChatFormatting.RED);
-    }
+    public static void render(GuiGraphicsExtractor g, DeltaTracker dt) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null || mc.level == null) return;
+        Tracker.pollClicks(mc);
+        Config c = Config.I;
+        Font f = mc.font;
+        long now = System.currentTimeMillis();
+        int w = g.guiWidth();
 
-    public static void tick(Minecraft mc) {
-        if (target == null) return;
-        long age = System.currentTimeMillis() - startAt;
-        if (!target.isAlive() || age >= DURATION_MS || mc.level == null) {
-            clear(mc);
-            return;
+        // ===== small left panel: only the important stats =====
+        List<String> L = new ArrayList<>();
+        if (c.fps) L.add("FPS " + mc.getFps());
+        if (c.cps) L.add("CPS " + Tracker.cps(Tracker.left) + " | " + Tracker.cps(Tracker.right));
+        if (c.ping) {
+            var con = mc.getConnection();
+            PlayerInfo pi = con == null ? null : con.getPlayerInfo(mc.player.getUUID());
+            if (pi != null) L.add("PING " + pi.getLatency());
         }
-        int step = (int) (age / 1000);
-        if (step == lastStep) return;
-        lastStep = step;
-        Scoreboard sb = mc.level.getScoreboard();
-        PlayerTeam team = sb.getPlayerTeam(TEAM);
-        if (team == null) return;
-        ChatFormatting[] fade = {ChatFormatting.RED, ChatFormatting.DARK_RED, ChatFormatting.DARK_GRAY, ChatFormatting.BLACK, ChatFormatting.BLACK};
-        setColor(sb, team, fade[Math.min(step, fade.length - 1)]);
-    }
+        if (c.hunger) L.add("FOOD " + mc.player.getFoodData().getFoodLevel());
+        if (c.reach && Tracker.lastReach > 0) L.add(String.format("REACH %.2f", Tracker.lastReach));
+        drawBox(g, f, L, 4, 4, false);
 
-    static void setColor(Scoreboard sb, PlayerTeam team, ChatFormatting color) {
-        team.setColor(color);
-    }
-
-    public static void clear(Minecraft mc) {
-        if (target != null) {
-            target.setGlowingTag(false);
-            if (mc.level != null) {
-                Scoreboard sb = mc.level.getScoreboard();
-                PlayerTeam team = sb.getPlayerTeam(TEAM);
-                if (team != null) sb.removePlayerFromTeam(target.getScoreboardName(), team);
-            }
+        // ===== top-center: one compact damage line =====
+        if (c.damagePanel) {
+            boolean hit = now - Tracker.lastHitAt < 3000, taken = now - Tracker.lastTakenAt < 3000;
+            String line = "DMG " + (hit ? "+" + fmt(Tracker.lastHit) : "0")
+                    + "   TAKEN " + (taken ? "-" + fmt(Tracker.lastTaken) : "0")
+                    + "   TOTAL " + fmt(Tracker.totalDealt);
+            if (c.combo && Tracker.combo > 0) line += "   COMBO " + Tracker.combo;
+            drawBox(g, f, List.of(line), (w - f.width(line)) / 2 - 3, 4, true);
         }
-        target = null;
+
+    }
+
+    static String fmt(float v) { return v == (int) v ? String.valueOf((int) v) : String.format("%.1f", v); }
+
+    static void drawBox(GuiGraphicsExtractor g, Font f, List<String> lines, int x, int y, boolean center) {
+        if (lines.isEmpty()) return;
+        int pw = 0;
+        for (String s : lines) pw = Math.max(pw, f.width(s));
+        g.fill(x - 2, y - 2, x + pw + 2, y + lines.size() * 9 + 1, 0x66000000);
+        int yy = y;
+        for (String s : lines) {
+            g.text(f, s, x, yy, Config.textCol(), true);
+            yy += 9;
+        }
     }
 }

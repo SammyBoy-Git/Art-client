@@ -49,6 +49,7 @@ public class Tracker {
     public static void tick(Minecraft mc) {
         if (mc.player == null || mc.level == null) { lastHp = -1; hp.clear(); return; }
         long now = System.currentTimeMillis();
+        Glow.tick(mc);
 
         // optional auto-sprint while holding forward
         if (Config.I.autoSprint && mc.options.keyUp.isDown()) mc.options.keySprint.setDown(true);
@@ -69,7 +70,7 @@ public class Tracker {
             int id = le.getId(); seen.add(id);
             float h = le.getHealth(), old = hp.getOrDefault(id, h);
             if (h < old && id == lastAttackId && now - lastAttackAt < 1000) {
-                lastHit = old - h; totalDealt += lastHit; lastHitAt = now; combo++; hitTarget = le; hitAt = now;
+                lastHit = old - h; totalDealt += lastHit; lastHitAt = now; combo++; hitTarget = le; hitAt = now; Glow.onHit(mc, le);
                 if (h <= 0) kills++;
             }
             hp.put(id, h);

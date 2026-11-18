@@ -40,7 +40,7 @@ public class Hud {
         if (c.facing) L.add("Facing: " + mc.player.getDirection());
         if (c.speed) L.add(String.format("Speed: %.2f b/s", Tracker.speed));
         if (c.worldTime) {
-            long t = mc.level.getDayTime(); long tod = t % 24000;
+            long t = mc.level.getGameTime(); long tod = t % 24000;
             L.add(String.format("Day %d  %02d:%02d", t / 24000 + 1, (tod / 1000 + 6) % 24, (tod % 1000) * 60 / 1000));
         }
         if (c.clock) L.add("Time: " + LocalTime.now().format(CLK));
@@ -129,8 +129,8 @@ public class Hud {
             key(g, f, "S", kx + 22, ky + 22, 20, 20, o.keyDown.isDown());
             key(g, f, "D", kx + 44, ky + 22, 20, 20, o.keyRight.isDown());
             key(g, f, "SPACE", kx, ky + 44, 64, 14, o.keyJump.isDown());
-            key(g, f, "LMB " + Tracker.cps(Tracker.left), kx, ky + 60, 31, 14, Tracker.leftDown);
-            key(g, f, "RMB " + Tracker.cps(Tracker.right), kx + 33, ky + 60, 31, 14, Tracker.rightDown);
+            key(g, f, "LMB " + Tracker.cps(Tracker.left), kx, ky + 60, 31, 14, Tracker.leftDownState());
+            key(g, f, "RMB " + Tracker.cps(Tracker.right), kx + 33, ky + 60, 31, 14, Tracker.rightDownState());
         }
     }
 

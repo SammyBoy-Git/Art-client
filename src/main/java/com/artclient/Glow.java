@@ -1,6 +1,5 @@
 package com.artclient;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.scores.PlayerTeam;
@@ -24,7 +23,7 @@ public class Glow {
         PlayerTeam team = sb.getPlayerTeam(TEAM);
         if (team == null) team = sb.addPlayerTeam(TEAM);
         sb.addPlayerToTeam(e.getScoreboardName(), team);
-        setColor(sb, team, ChatFormatting.RED);
+        setColor(sb, team, null);
     }
 
     public static void tick(Minecraft mc) {
@@ -40,12 +39,12 @@ public class Glow {
         Scoreboard sb = mc.level.getScoreboard();
         PlayerTeam team = sb.getPlayerTeam(TEAM);
         if (team == null) return;
-        ChatFormatting[] fade = {ChatFormatting.RED, ChatFormatting.DARK_RED, ChatFormatting.DARK_GRAY, ChatFormatting.BLACK, ChatFormatting.BLACK};
-        setColor(sb, team, fade[Math.min(step, fade.length - 1)]);
+        setColor(sb, team, null);
     }
 
-    static void setColor(Scoreboard sb, PlayerTeam team, ChatFormatting color) {
-        team.setColor(color);
+    static void setColor(Scoreboard sb, PlayerTeam team, Object color) {
+        // 26.x moved team colours to TeamColor (Optional<TeamColor>); red is added in a later pass
+        team.setColor(java.util.Optional.empty());
     }
 
     public static void clear(Minecraft mc) {

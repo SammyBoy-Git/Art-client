@@ -3,7 +3,6 @@ package com.artclient;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import org.lwjgl.glfw.GLFW;
 import java.util.*;
 
 /** Collects clicks, damage dealt/taken, kills, combo, reach, target info and speed. */
@@ -23,10 +22,9 @@ public class Tracker {
 
     /** Called every rendered frame from the HUD so fast clicks aren't missed. */
     public static void pollClicks(Minecraft mc) {
-        if (mc.screen != null) { leftDown = rightDown = false; return; }
-        long h = mc.getWindow().handle(), now = System.currentTimeMillis();
-        boolean l = GLFW.glfwGetMouseButton(h, GLFW.GLFW_MOUSE_BUTTON_LEFT) == GLFW.GLFW_PRESS;
-        boolean r = GLFW.glfwGetMouseButton(h, GLFW.GLFW_MOUSE_BUTTON_RIGHT) == GLFW.GLFW_PRESS;
+        long now = System.currentTimeMillis();
+        boolean l = mc.options.keyAttack.isDown();
+        boolean r = mc.options.keyUse.isDown();
         if (l && !leftDown) {
             left.add(now);
             if (target != null && target.isAlive() && now - targetSeenAt < 300 && mc.player != null) {
@@ -38,6 +36,9 @@ public class Tracker {
         if (r && !rightDown) right.add(now);
         leftDown = l; rightDown = r;
     }
+    public static boolean leftDownState() { return leftDown; }
+    public static boolean rightDownState() { return rightDown; }
+
     public static int cps(ArrayDeque<Long> q) {
         long now = System.currentTimeMillis();
         while (!q.isEmpty() && now - q.peekFirst() > Config.I.cpsWindowMs) q.pollFirst();
@@ -49,7 +50,7 @@ public class Tracker {
         long now = System.currentTimeMillis();
 
         // optional auto-sprint while holding forward
-        if (Config.I.autoSprint && mc.screen == null && mc.options.keyUp.isDown()) mc.options.keySprint.setDown(true);
+        if (Config.I.autoSprint && mc.options.keyUp.isDown()) mc.options.keySprint.setDown(true);
 
         // damage taken (health + absorption) - also resets your combo
         float cur = mc.player.getHealth() + mc.player.getAbsorptionAmount();

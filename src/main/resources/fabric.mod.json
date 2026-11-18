@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "artclient",
+  "version": "${version}",
+  "name": "Art Client",
+  "description": "A personal HUD client: FPS, CPS, ping, mob health, damage dealt/taken, combo, kills, keystrokes, effects and more - fully customizable.",
+  "authors": ["Art"],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": { "client": ["com.artclient.ArtClient"] },
+  "depends": {
+    "fabricloader": ">=0.18.0",
+    "minecraft": ">=26.3",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

@@ -8,13 +8,13 @@ import java.nio.file.*;
 /** Edit .minecraft/config/art_client.json (in your Modrinth instance folder) to make it yours. */
 public class Config {
     // ---- info panel
-    public boolean watermark = true, fps = true, cps = true, ping = true, coords = true, facing = true,
-            speed = true, memory = true, clock = true, worldTime = true, serverIp = true,
-            hunger = true, armor = true;
+    public boolean watermark = false, fps = true, cps = true, ping = true, coords = false, facing = false,
+            speed = false, memory = false, clock = false, worldTime = false, serverIp = false,
+            hunger = true, armor = false;
     // ---- combat info
-    public boolean mobHealth = true, damagePanel = true, combo = true, kills = true, reach = true;
+    public boolean mobHealth = true, damagePanel = true, combo = true, kills = false, reach = true;
     // ---- extras
-    public boolean keystrokes = true, effects = true, items = true;
+    public boolean keystrokes = false, effects = false, items = false;
     public boolean autoSprint = false;
     // ---- personal style
     public String accent = "#55FFFF";      // watermark / bar highlight colour

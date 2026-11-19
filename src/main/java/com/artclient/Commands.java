@@ -1,11 +1,27 @@
 package com.artclient;
 
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 /** Handles client-side "/Art ..." commands. Nothing is sent to the server. */
 public class Commands {
+
+    /** Registers /Art with the game's command parser so it is recognized and never sent to the server. */
+    public static void register(CommandDispatcher<FabricClientCommandSource> dispatcher) {
+        dispatcher.register(ClientCommandManager.literal("Art")
+                .executes(ctx -> { handle("Art help"); return 1; })
+                .then(ClientCommandManager.argument("args", StringArgumentType.greedyString())
+                        .executes(ctx -> {
+                            handle("Art " + StringArgumentType.getString(ctx, "args"));
+                            return 1;
+                        })));
+    }
 
     /** Returns false to block the command from reaching the server. */
     public static boolean handle(String command) {

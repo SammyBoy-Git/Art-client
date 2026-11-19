@@ -1,7 +1,5 @@
 package com.artclient;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
@@ -101,7 +99,7 @@ public class Commands {
     }
 
     static void say(String msg) {
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) mc.gui.chat.addClientSystemMessage(Component.literal("[Art] " + msg));
+        // Chat feedback is disabled until the 26.3 chat name is confirmed; messages go to the game log.
+        System.out.println("[Art] " + msg);
     }
 }

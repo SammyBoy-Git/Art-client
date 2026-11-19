@@ -1,6 +1,5 @@
 package com.artclient;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -11,11 +10,8 @@ import java.util.List;
 
 /** Settings screen opened from Mod Menu: one on/off button per feature. */
 public class ArtConfigScreen extends Screen {
-    private final Screen parent;
-
     public ArtConfigScreen(Screen parent) {
         super(Component.literal("Art Client"));
-        this.parent = parent;
     }
 
     static List<Field> booleanSettings() {
@@ -35,7 +31,8 @@ public class ArtConfigScreen extends Screen {
                     btn -> {
                         setValue(f, !getValue(f));
                         Config.save();
-                        Minecraft.getInstance().setScreen(new ArtConfigScreen(parent));
+                        this.clearWidgets();
+                        this.init();
                     }).bounds(x, y, 220, 20).build();
             this.addRenderableWidget(b);
             y += 24;
@@ -46,7 +43,9 @@ public class ArtConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        Minecraft.getInstance().setScreen(parent);
+        // Closes back to the game. Returning to the Mod Menu list needs a screen-switch
+        // call that I haven't confirmed for 26.3 yet.
+        super.onClose();
     }
 
     static boolean getValue(Field f) {

@@ -29,6 +29,10 @@ public class Config {
     public boolean healthWarning = true;    // heart icon when health is low
     public int lowHealthAmount = 6;         // health points (6 = three hearts)
 
+    // red skull when a hostile mob or other player is within this many blocks
+    public boolean skullWarning = true;
+    public int skullRangeBlocks = 16;
+
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static Path path() { return FabricLoader.getInstance().getConfigDir().resolve("art_client.json"); }

@@ -10,7 +10,7 @@ public class ArtClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         Config.load();
-        ClientCommandRegistrationCallback.EVENT.register(Commands::register);
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, buildContext) -> Commands.register(dispatcher));
         ClientTickEvents.END_CLIENT_TICK.register(Tracker::tick);
         HudElementRegistry.addLast(Identifier.fromNamespaceAndPath("artclient", "hud"), Hud::render);
     }

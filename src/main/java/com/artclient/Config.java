@@ -24,9 +24,23 @@ public class Config {
     public String watermarkText = "Art Client";
     public int cpsWindowMs = 1000;
 
+    // ---- crosshair
+    public String crosshairStyle = "cross";        // cross, dot, square, off
+    public String crosshairColor = "#FFFFFF";
+    public int crosshairSize = 6, crosshairGap = 3, crosshairThickness = 1;
+    // ---- proximity shake (hostile mobs and other players)
+    public boolean shakeEnabled = true;
+    public int shakeRangeBlocks = 10;
+    // saved crosshair presets, one per line: name|style|color|size|gap|thickness
+    public java.util.List<String> savedCrosshairs = new java.util.ArrayList<>();
+
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static Path path() { return FabricLoader.getInstance().getConfigDir().resolve("art_client.json"); }
+
+    public static void save() {
+        try { Files.writeString(path(), GSON.toJson(I)); } catch (Exception e) { e.printStackTrace(); }
+    }
 
     public static void load() {
         try {

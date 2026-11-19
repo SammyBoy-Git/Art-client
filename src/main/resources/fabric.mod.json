@@ -4,10 +4,19 @@
   "version": "${version}",
   "name": "Art Client",
   "description": "A personal HUD client: FPS, CPS, ping, mob health, damage dealt/taken, combo, kills, keystrokes, effects and more - fully customizable.",
-  "authors": ["Art"],
+  "authors": [
+    "Art"
+  ],
   "license": "MIT",
   "environment": "client",
-  "entrypoints": { "client": ["com.artclient.ArtClient"] },
+  "entrypoints": {
+    "client": [
+      "com.artclient.ArtClient"
+    ],
+    "modmenu": [
+      "com.artclient.ArtModMenu"
+    ]
+  },
   "depends": {
     "fabricloader": ">=0.18.0",
     "minecraft": ">=26.3",

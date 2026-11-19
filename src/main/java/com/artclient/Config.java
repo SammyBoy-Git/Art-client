@@ -33,6 +33,10 @@ public class Config {
     public boolean skullWarning = true;
     public int skullRangeBlocks = 16;
 
+    // red drumstick when food is low
+    public boolean hungerWarning = true;
+    public int lowHungerAmount = 6;      // food points (6 = three drumsticks)
+
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static Path path() { return FabricLoader.getInstance().getConfigDir().resolve("art_client.json"); }

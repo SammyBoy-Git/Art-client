@@ -102,6 +102,6 @@ public class Commands {
 
     static void say(String msg) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) mc.gui.getChat().addClientSystemMessage(Component.literal("[Art] " + msg));
+        if (mc.player != null) mc.gui.chat.addClientSystemMessage(Component.literal("[Art] " + msg));
     }
 }

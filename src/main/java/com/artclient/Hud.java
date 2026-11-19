@@ -74,6 +74,25 @@ public class Hud {
                     g.fill(x + col * scale, y + r * scale, x + (col + 1) * scale, y + (r + 1) * scale, RED);
     }
 
+    static final int[][] SKULL = {
+        {0,1,1,1,1,1,0},
+        {1,1,1,1,1,1,1},
+        {1,1,0,1,0,1,1},
+        {1,1,1,1,1,1,1},
+        {0,1,0,1,0,1,0},
+        {0,1,1,1,1,1,0}
+    };
+
+    /** True if a hostile mob or another player is within the given range. */
+    static boolean threatNearby(Minecraft mc, double range) {
+        for (net.minecraft.world.entity.Entity e : mc.level.entitiesForRendering()) {
+            if (e == mc.player || !(e instanceof net.minecraft.world.entity.LivingEntity le) || !le.isAlive()) continue;
+            if (!(e instanceof net.minecraft.world.entity.monster.Monster) && !(e instanceof net.minecraft.world.entity.player.Player)) continue;
+            if (e.distanceTo(mc.player) <= range) return true;
+        }
+        return false;
+    }
+
     static void drawWarnings(GuiGraphicsExtractor g, Minecraft mc) {
         Config c = Config.I;
         int w = g.guiWidth();
@@ -88,6 +107,10 @@ public class Hud {
         }
         if (c.healthWarning && mc.player.getHealth() <= c.lowHealthAmount) {
             drawIcon(g, HEART, x, y, scale);
+            y += 6 * scale + 4;
+        }
+        if (c.skullWarning && threatNearby(mc, c.skullRangeBlocks)) {
+            drawIcon(g, SKULL, x, y, scale);
         }
     }
 

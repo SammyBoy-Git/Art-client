@@ -23,6 +23,12 @@ public class Config {
     public boolean panelsOnRight = false;
     public String watermarkText = "Art Client";
     public int cpsWindowMs = 1000;
+    // ---- top-right warnings (icons in red)
+    public boolean lightWarning = true;     // light icon when standing in low light
+    public int lowLightLevel = 7;           // mobs can spawn at or below this light level
+    public boolean healthWarning = true;    // heart icon when health is low
+    public int lowHealthAmount = 6;         // health points (6 = three hearts)
+
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static Path path() { return FabricLoader.getInstance().getConfigDir().resolve("art_client.json"); }

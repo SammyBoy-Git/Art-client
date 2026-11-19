@@ -33,7 +33,6 @@ public class Hud {
         if (c.hunger) L.add("FOOD " + mc.player.getFoodData().getFoodLevel());
         if (c.reach && Tracker.lastReach > 0) L.add(String.format("REACH %.2f", Tracker.lastReach));
         drawBox(g, f, L, 4, 4, false);
-        drawTargetCrosshair(g, mc);
 
         // ===== top-center: one compact damage line =====
         if (c.damagePanel) {
@@ -45,17 +44,6 @@ public class Hud {
             drawBox(g, f, List.of(line), (w - f.width(line)) / 2 - 3, 4, true);
         }
 
-    }
-
-    // red crosshair drawn over the center when aiming at a mob or player
-    static void drawTargetCrosshair(GuiGraphicsExtractor g, Minecraft mc) {
-        if (!Config.I.redCrosshairOnTarget) return;
-        var hit = mc.crosshairPickEntity;
-        if (!(hit instanceof net.minecraft.world.entity.LivingEntity) || hit == mc.player) return;
-        int cx = g.guiWidth() / 2, cy = g.guiHeight() / 2;
-        int red = 0xFFFF3030;
-        g.fill(cx - 6, cy - 1, cx + 7, cy + 1, red);
-        g.fill(cx - 1, cy - 6, cx + 1, cy + 7, red);
     }
 
     static String fmt(float v) { return v == (int) v ? String.valueOf((int) v) : String.format("%.1f", v); }

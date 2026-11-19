@@ -23,6 +23,8 @@ public class Config {
     public boolean panelsOnRight = false;
     public String watermarkText = "Art Client";
     public int cpsWindowMs = 1000;
+    // draw a red crosshair when aiming at a mob or player
+    public boolean redCrosshairOnTarget = true;
 
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

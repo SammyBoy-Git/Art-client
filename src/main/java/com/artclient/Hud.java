@@ -33,6 +33,7 @@ public class Hud {
         if (c.hunger) L.add("FOOD " + mc.player.getFoodData().getFoodLevel());
         if (c.reach && Tracker.lastReach > 0) L.add(String.format("REACH %.2f", Tracker.lastReach));
         drawBox(g, f, L, 4, 4, false);
+        drawWarnings(g, mc);
 
         // ===== top-center: one compact damage line =====
         if (c.damagePanel) {
@@ -44,6 +45,50 @@ public class Hud {
             drawBox(g, f, List.of(line), (w - f.width(line)) / 2 - 3, 4, true);
         }
 
+    }
+
+    // ===== top-right warning icons: light and heart, both red =====
+    static final int RED = 0xFFFF3030;
+    static final int[][] HEART = {
+        {0,1,1,0,1,1,0},
+        {1,1,1,1,1,1,1},
+        {1,1,1,1,1,1,1},
+        {0,1,1,1,1,1,0},
+        {0,0,1,1,1,0,0},
+        {0,0,0,1,0,0,0}
+    };
+    static final int[][] SUN = {
+        {0,0,0,1,0,0,0},
+        {0,1,0,1,0,1,0},
+        {0,0,1,1,1,0,0},
+        {1,1,1,1,1,1,1},
+        {0,0,1,1,1,0,0},
+        {0,1,0,1,0,1,0},
+        {0,0,0,1,0,0,0}
+    };
+
+    static void drawIcon(GuiGraphicsExtractor g, int[][] pattern, int x, int y, int scale) {
+        for (int r = 0; r < pattern.length; r++)
+            for (int col = 0; col < pattern[r].length; col++)
+                if (pattern[r][col] == 1)
+                    g.fill(x + col * scale, y + r * scale, x + (col + 1) * scale, y + (r + 1) * scale, RED);
+    }
+
+    static void drawWarnings(GuiGraphicsExtractor g, Minecraft mc) {
+        Config c = Config.I;
+        int w = g.guiWidth();
+        int scale = 2, iconW = 7 * scale;
+        int x = w - iconW - 6, y = 6;
+        if (c.lightWarning) {
+            int light = mc.level.getMaxLocalRawBrightness(mc.player.blockPosition());
+            if (light <= c.lowLightLevel) {
+                drawIcon(g, SUN, x, y, scale);
+                y += 8 * scale + 4;
+            }
+        }
+        if (c.healthWarning && mc.player.getHealth() <= c.lowHealthAmount) {
+            drawIcon(g, HEART, x, y, scale);
+        }
     }
 
     static String fmt(float v) { return v == (int) v ? String.valueOf((int) v) : String.format("%.1f", v); }

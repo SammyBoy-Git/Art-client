@@ -74,6 +74,15 @@ public class Hud {
                     g.fill(x + col * scale, y + r * scale, x + (col + 1) * scale, y + (r + 1) * scale, RED);
     }
 
+    static final int[][] HUNGER = {
+        {0,1,1,1,0,0,0},
+        {1,1,1,1,1,0,0},
+        {1,1,1,1,1,0,0},
+        {0,1,1,1,1,0,1},
+        {0,0,1,1,0,1,1},
+        {0,0,0,0,1,1,1}
+    };
+
     static final int[][] SKULL = {
         {0,1,1,1,1,1,0},
         {1,1,1,1,1,1,1},
@@ -107,6 +116,10 @@ public class Hud {
         }
         if (c.healthWarning && mc.player.getHealth() <= c.lowHealthAmount) {
             drawIcon(g, HEART, x, y, scale);
+            y += 6 * scale + 4;
+        }
+        if (c.hungerWarning && mc.player.getFoodData().getFoodLevel() <= c.lowHungerAmount) {
+            drawIcon(g, HUNGER, x, y, scale);
             y += 6 * scale + 4;
         }
         if (c.skullWarning && threatNearby(mc, c.skullRangeBlocks)) {

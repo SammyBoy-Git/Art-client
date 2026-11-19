@@ -33,6 +33,7 @@ public class Hud {
         if (c.hunger) L.add("FOOD " + mc.player.getFoodData().getFoodLevel());
         if (c.reach && Tracker.lastReach > 0) L.add(String.format("REACH %.2f", Tracker.lastReach));
         drawBox(g, f, L, 4, 4, false);
+        drawCrosshair(g, mc);
 
         // ===== top-center: one compact damage line =====
         if (c.damagePanel) {
@@ -44,6 +45,12 @@ public class Hud {
             drawBox(g, f, List.of(line), (w - f.width(line)) / 2 - 3, 4, true);
         }
 
+    }
+
+    // crosshair with proximity shake, drawn last
+    static void drawCrosshair(GuiGraphicsExtractor g, Minecraft mc) {
+        float intensity = Threat.intensity(mc);
+        Crosshair.render(g, g.guiWidth(), g.guiHeight(), Threat.shakeOffset(intensity));
     }
 
     static String fmt(float v) { return v == (int) v ? String.valueOf((int) v) : String.format("%.1f", v); }

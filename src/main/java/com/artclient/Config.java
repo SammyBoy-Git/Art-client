@@ -37,6 +37,9 @@ public class Config {
     public boolean hungerWarning = true;
     public int lowHungerAmount = 6;      // food points (6 = three drumsticks)
 
+    // block name shown in the bottom-right corner
+    public boolean showTargetBlock = true;
+
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     static Path path() { return FabricLoader.getInstance().getConfigDir().resolve("art_client.json"); }

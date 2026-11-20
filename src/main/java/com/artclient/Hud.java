@@ -34,6 +34,7 @@ public class Hud {
         if (c.reach && Tracker.lastReach > 0) L.add(String.format("REACH %.2f", Tracker.lastReach));
         drawBox(g, f, L, 4, 4, false);
         drawWarnings(g, mc);
+        drawTargetBlock(g, mc);
 
         // ===== top-center: one compact damage line =====
         if (c.damagePanel) {
@@ -125,6 +126,19 @@ public class Hud {
         if (c.skullWarning && threatNearby(mc, c.skullRangeBlocks)) {
             drawIcon(g, SKULL, x, y, scale);
         }
+    }
+
+    // block name in the bottom-right corner, for the block under the crosshair
+    static void drawTargetBlock(GuiGraphicsExtractor g, Minecraft mc) {
+        if (!Config.I.showTargetBlock) return;
+        if (!(mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult bhr)) return;
+        var state = mc.level.getBlockState(bhr.getBlockPos());
+        if (state.isAir()) return;
+        String name = state.getBlock().getName().getString();
+        int x = g.guiWidth() - mc.font.width(name) - 6;
+        int y = g.guiHeight() - 14;
+        g.fill(x - 3, y - 3, x + mc.font.width(name) + 3, y + 10, 0x66000000);
+        g.text(mc.font, name, x, y, Config.textCol(), true);
     }
 
     static String fmt(float v) { return v == (int) v ? String.valueOf((int) v) : String.format("%.1f", v); }

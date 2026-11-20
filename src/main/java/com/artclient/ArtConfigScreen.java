@@ -15,12 +15,22 @@ public class ArtConfigScreen extends Screen {
             List.of("lightWarning", "healthWarning", "hungerWarning", "skullWarning"),
             List.of("autoSprint")
     );
-    static final java.util.Map<String, String> LABELS = java.util.Map.of(
-            "fps", "FPS", "cps", "CPS", "ping", "Ping", "hunger", "Food", "reach", "Reach",
-            "damagePanel", "Damage line", "combo", "Combo", "showTargetBlock", "Block name",
-            "lightWarning", "Low light icon", "healthWarning", "Low health icon",
-            "hungerWarning", "Low food icon", "skullWarning", "Threat skull icon",
-            "autoSprint", "Auto sprint");
+    static final java.util.Map<String, String> LABELS = new java.util.HashMap<>();
+    static {
+        LABELS.put("fps", "FPS");
+        LABELS.put("cps", "CPS");
+        LABELS.put("ping", "Ping");
+        LABELS.put("hunger", "Food");
+        LABELS.put("reach", "Reach");
+        LABELS.put("damagePanel", "Damage line");
+        LABELS.put("combo", "Combo");
+        LABELS.put("showTargetBlock", "Block name");
+        LABELS.put("lightWarning", "Low light icon");
+        LABELS.put("healthWarning", "Low health icon");
+        LABELS.put("hungerWarning", "Low food icon");
+        LABELS.put("skullWarning", "Threat skull icon");
+        LABELS.put("autoSprint", "Auto sprint");
+    }
 
     private int tab = 0;
 

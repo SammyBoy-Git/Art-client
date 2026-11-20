@@ -7,38 +7,25 @@ import java.nio.file.*;
 
 /** Settings live in config/art_client.json, and can also be changed from Mod Menu. */
 public class Config {
-    // ---- info panel
-    public boolean watermark = false, fps = true, cps = true, ping = true, coords = false, facing = false,
-            speed = false, memory = false, clock = false, worldTime = false, serverIp = false,
-            hunger = true, armor = false;
-    // ---- combat info
-    public boolean mobHealth = true, damagePanel = true, combo = true, kills = false, reach = true;
-    // ---- extras
-    public boolean keystrokes = false, effects = false, items = false;
+    // ---- HUD tab: on/off
+    public boolean fps = true, cps = true, ping = true, hunger = true, reach = true,
+            damagePanel = true, combo = true, showTargetBlock = true;
+
+    // ---- Warnings tab: on/off
+    public boolean lightWarning = true, healthWarning = true, hungerWarning = true, skullWarning = true;
+
+    // ---- Combat tab: on/off
     public boolean autoSprint = false;
-    // ---- personal style
-    public String accent = "#55FFFF";
-    public String textColor = "#FFFFFF";
-    public int backgroundAlpha = 102;
-    public boolean panelsOnRight = false;
-    public String watermarkText = "Art Client";
+
+    // ---- thresholds (edit in art_client.json)
+    public int lowLightLevel = 7;       // light icon at or below this light level
+    public int lowHealthAmount = 6;     // heart icon at or below this health
+    public int lowHungerAmount = 6;     // drumstick at or below this food level
+    public int skullRangeBlocks = 16;   // skull when a hostile or player is this close
     public int cpsWindowMs = 1000;
-    // ---- top-right warnings (icons in red)
-    public boolean lightWarning = true;     // light icon when standing in low light
-    public int lowLightLevel = 7;           // mobs can spawn at or below this light level
-    public boolean healthWarning = true;    // heart icon when health is low
-    public int lowHealthAmount = 6;         // health points (6 = three hearts)
 
-    // red skull when a hostile mob or other player is within this many blocks
-    public boolean skullWarning = true;
-    public int skullRangeBlocks = 16;
-
-    // red drumstick when food is low
-    public boolean hungerWarning = true;
-    public int lowHungerAmount = 6;      // food points (6 = three drumsticks)
-
-    // block name shown in the bottom-right corner
-    public boolean showTargetBlock = true;
+    // ---- style
+    public String textColor = "#FFFFFF";
 
     public static Config I = new Config();
     static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -59,7 +46,5 @@ public class Config {
     static int parse(String hex, int fallback) {
         try { return 0xFF000000 | Integer.parseInt(hex.replace("#", ""), 16); } catch (Exception e) { return fallback; }
     }
-    public static int accentColor() { return parse(I.accent, 0xFF55FFFF); }
-    public static int textCol()     { return parse(I.textColor, 0xFFFFFFFF); }
-    public static int bg()          { return (Math.max(0, Math.min(255, I.backgroundAlpha)) << 24); }
+    public static int textCol() { return parse(I.textColor, 0xFFFFFFFF); }
 }

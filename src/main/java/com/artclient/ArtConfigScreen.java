@@ -4,48 +4,82 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
 import java.util.List;
 
-/** Settings screen opened from Mod Menu: one on/off button per feature. */
+/** Mod Menu settings screen: tabs at the top, Done always fixed at the bottom. */
 public class ArtConfigScreen extends Screen {
+
+    static final String[] TAB_NAMES = {"HUD", "Warnings", "Combat"};
+    static final List<List<String>> TAB_SETTINGS = List.of(
+            List.of("fps", "cps", "ping", "hunger", "reach", "damagePanel", "combo", "showTargetBlock"),
+            List.of("lightWarning", "healthWarning", "hungerWarning", "skullWarning"),
+            List.of("autoSprint")
+    );
+    static final java.util.Map<String, String> LABELS = java.util.Map.of(
+            "fps", "FPS", "cps", "CPS", "ping", "Ping", "hunger", "Food", "reach", "Reach",
+            "damagePanel", "Damage line", "combo", "Combo", "showTargetBlock", "Block name",
+            "lightWarning", "Low light icon", "healthWarning", "Low health icon",
+            "hungerWarning", "Low food icon", "skullWarning", "Threat skull icon",
+            "autoSprint", "Auto sprint");
+
+    private int tab = 0;
+
     public ArtConfigScreen(Screen parent) {
         super(Component.literal("Art Client"));
     }
 
-    static List<Field> booleanSettings() {
-        List<Field> out = new ArrayList<>();
-        for (Field f : Config.class.getFields()) {
-            if (!Modifier.isStatic(f.getModifiers()) && f.getType() == boolean.class) out.add(f);
-        }
-        return out;
-    }
-
     @Override
     protected void init() {
-        int x = this.width / 2 - 110, y = 40;
-        for (Field f : booleanSettings()) {
+        // tab buttons across the top
+        int tabW = 90, gap = 4;
+        int startX = this.width / 2 - (TAB_NAMES.length * (tabW + gap) - gap) / 2;
+        for (int i = 0; i < TAB_NAMES.length; i++) {
+            final int idx = i;
+            String label = (i == tab ? "> " : "") + TAB_NAMES[i];
+            this.addRenderableWidget(Button.builder(Component.literal(label), btn -> switchTab(idx))
+                    .bounds(startX + i * (tabW + gap), 30, tabW, 20).build());
+        }
+
+        // the settings for the selected tab, one per row, below the tabs
+        int x = this.width / 2 - 110, y = 60;
+        for (String name : TAB_SETTINGS.get(tab)) {
+            Field f = field(name);
+            if (f == null) continue;
             boolean value = getValue(f);
-            Button b = Button.builder(Component.literal(prettyName(f.getName()) + ": " + (value ? "On" : "Off")),
+            this.addRenderableWidget(Button.builder(
+                    Component.literal(LABELS.getOrDefault(name, name) + ": " + (value ? "On" : "Off")),
                     btn -> {
                         setValue(f, !getValue(f));
                         Config.save();
                         this.clearWidgets();
                         this.init();
-                    }).bounds(x, y, 220, 20).build();
-            this.addRenderableWidget(b);
+                    }).bounds(x, y, 220, 20).build());
             y += 24;
         }
+
+        // Done is placed last and stays at the bottom, so tabs never cover it
         this.addRenderableWidget(Button.builder(Component.literal("Done"), btn -> onClose())
-                .bounds(this.width / 2 - 100, this.height - 30, 200, 20).build());
+                .bounds(this.width / 2 - 100, this.height - 28, 200, 20).build());
+    }
+
+    void switchTab(int idx) {
+        tab = idx;
+        this.clearWidgets();
+        this.init();
     }
 
     @Override
     public void onClose() {
-        // Closes back to the game. Returning to the Mod Menu list needs a screen-switch
-        // call that I haven't confirmed for 26.3 yet.
         super.onClose();
+    }
+
+    static Field field(String name) {
+        try {
+            Field f = Config.class.getField(name);
+            return f.getType() == boolean.class ? f : null;
+        } catch (NoSuchFieldException e) {
+            return null;
+        }
     }
 
     static boolean getValue(Field f) {
@@ -54,9 +88,5 @@ public class ArtConfigScreen extends Screen {
 
     static void setValue(Field f, boolean v) {
         try { f.setBoolean(Config.I, v); } catch (IllegalAccessException e) { e.printStackTrace(); }
-    }
-
-    static String prettyName(String camel) {
-        return camel.substring(0, 1).toUpperCase() + camel.substring(1).replaceAll("([A-Z])", " $1");
     }
 }

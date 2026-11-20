@@ -131,10 +131,15 @@ public class Hud {
     // block name in the bottom-right corner, for the block under the crosshair
     static void drawTargetBlock(GuiGraphicsExtractor g, Minecraft mc) {
         if (!Config.I.showTargetBlock) return;
-        if (!(mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult bhr)) return;
-        var state = mc.level.getBlockState(bhr.getBlockPos());
-        if (state.isAir()) return;
-        String name = state.getBlock().getName().getString();
+        String name = null;
+        if (mc.hitResult instanceof net.minecraft.world.phys.EntityHitResult ehr) {
+            var e = ehr.getEntity();
+            if (e != mc.player) name = e.getName().getString();
+        } else if (mc.hitResult instanceof net.minecraft.world.phys.BlockHitResult bhr) {
+            var state = mc.level.getBlockState(bhr.getBlockPos());
+            if (!state.isAir()) name = state.getBlock().getName().getString();
+        }
+        if (name == null) return;
         int x = g.guiWidth() - mc.font.width(name) - 6;
         int y = g.guiHeight() - 14;
         g.fill(x - 3, y - 3, x + mc.font.width(name) + 3, y + 10, 0x66000000);
